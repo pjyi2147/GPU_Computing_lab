@@ -1,0 +1,8 @@
+[TIME][Generic][Importing data and creating memory on host][template.cu: 24-30] Elapsed time: 189.674 ms
+The input length is 25365
+[TIME][GPU][Allocating GPU memory.][template.cu: 34-40] Elapsed time: 0.125495 ms
+[TIME][GPU][Copying input memory to the GPU.][template.cu: 42-46] Elapsed time: 0.069662 ms
+[TIME][Compute][Performing CUDA computation][template.cu: 51-56] Elapsed time: 0.039346 ms
+[TIME][Copy][Copying output memory to the CPU][template.cu: 58-62] Elapsed time: 0.040153 ms
+[TIME][GPU][Freeing GPU Memory][template.cu: 64-70] Elapsed time: 0.094312 ms
+The solution is correct

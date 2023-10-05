@@ -1,0 +1,97 @@
+[
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkArg.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkArg.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkArg.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkCUDA.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkCUDA.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkCUDA.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkDataset.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkDataset.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkDataset.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkDirectory.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkDirectory.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkDirectory.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkExit.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkExit.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkExit.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkExport.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkExport.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkExport.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkFile.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkFile.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkFile.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkImage.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkImage.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkImage.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkImport.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkImport.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkImport.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkInit.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkInit.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkInit.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkLogger.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkLogger.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkLogger.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkMPI.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkMPI.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkMPI.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkPPM.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkPPM.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkPPM.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkPath.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkPath.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkPath.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkSolution.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkSolution.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkSolution.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkSparse.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkSparse.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkSparse.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkTimer.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkTimer.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkTimer.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/gputkUtils.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkUtils.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/gputkUtils.cpp"
+},
+{
+  "directory": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build",
+  "command": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/c++ -DGPUTK_USE_CUDA -I/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk -isystem /opt/ohpc/pub/apps/cuda-11.2/include  -Wno-dollar-in-identifier-extension -O3 -DNDEBUG  -DgpuTKLogger_TimerLog -std=c++11 -Wno-unused-function -Wno-unused-parameter -Wextra -Wno-unused-variable -std=gnu++11 -o CMakeFiles/gputk.dir/libgputk/vendor/json11.cpp.o -c /home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/vendor/json11.cpp",
+  "file": "/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/libgputk/vendor/json11.cpp"
+}
+]
