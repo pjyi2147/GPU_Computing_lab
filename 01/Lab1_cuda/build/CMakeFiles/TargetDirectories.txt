@@ -1,3 +1,0 @@
-/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build/CMakeFiles/gputk.dir
-/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build/CMakeFiles/edit_cache.dir
-/home/jeongseopyi/CSED490C/lab/01/Lab1_cuda/build/CMakeFiles/rebuild_cache.dir

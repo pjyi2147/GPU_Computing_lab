@@ -1,3 +1,0 @@
-/home/patrick/school/postech-F23/CSED490C/CSED490C-lab/02/Lab2_cuda/build/CMakeFiles/gputk.dir
-/home/patrick/school/postech-F23/CSED490C/CSED490C-lab/02/Lab2_cuda/build/CMakeFiles/edit_cache.dir
-/home/patrick/school/postech-F23/CSED490C/CSED490C-lab/02/Lab2_cuda/build/CMakeFiles/rebuild_cache.dir
