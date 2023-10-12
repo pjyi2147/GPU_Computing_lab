@@ -17,6 +17,45 @@ __global__ void matrixMultiplyShared(float *A, float *B, float *C,
                                      int numCRows, int numCColumns) {
   //@@ Insert code to implement matrix multiplication here
   //@@ You have to use shared memory for this lab
+
+  __shared__ float ds_A[32][32];
+  __shared__ float ds_B[32][32];
+
+  int bx = blockIdx.x;
+  int by = blockIdx.y;
+  int tx = threadIdx.x;
+  int ty = threadIdx.y;
+
+  int Row = by * blockDim.y + ty;
+  int Col = bx * blockDim.x + tx;
+
+  float Cvalue = 0.0;
+
+  for (int m = 0; m < (numAColumns - 1) / 32 + 1; ++m) {
+    if (Row < numARows && m * 32 + tx < numAColumns) {
+      ds_A[ty][tx] = A[Row * numAColumns + m * 32 + tx];
+    } else {
+      ds_A[ty][tx] = 0.0;
+    }
+
+    if (m * 32 + ty < numBRows && Col < numBColumns) {
+      ds_B[ty][tx] = B[(m * 32 + ty) * numBColumns + Col];
+    } else {
+      ds_B[ty][tx] = 0.0;
+    }
+
+    __syncthreads();
+
+    for (int k = 0; k < 32; ++k) {
+      Cvalue += ds_A[ty][k] * ds_B[k][tx];
+    }
+
+    __syncthreads();
+  }
+
+  if (Row < numCRows && Col < numCColumns) {
+    C[Row * numCColumns + Col] = Cvalue;
+  }
 }
 
 int main(int argc, char **argv) {
@@ -53,29 +92,48 @@ int main(int argc, char **argv) {
 
   gpuTKTime_start(GPU, "Allocating GPU memory.");
   //@@ Allocate GPU memory here
+  cudaMalloc((void **)&deviceA, numARows * numAColumns * sizeof(float));
+  cudaMalloc((void **)&deviceB, numBRows * numBColumns * sizeof(float));
+  cudaMalloc((void **)&deviceC, numCRows * numCColumns * sizeof(float));
 
   gpuTKTime_stop(GPU, "Allocating GPU memory.");
 
   gpuTKTime_start(GPU, "Copying input memory to the GPU.");
   //@@ Copy memory to the GPU here
+  cudaMemcpy(deviceA, hostA, numARows * numAColumns * sizeof(float),
+             cudaMemcpyHostToDevice);
+  cudaMemcpy(deviceB, hostB, numBRows * numBColumns * sizeof(float),
+             cudaMemcpyHostToDevice);
+  cudaMemset(deviceC, 0, numCRows * numCColumns * sizeof(float));
 
   gpuTKTime_stop(GPU, "Copying input memory to the GPU.");
 
   //@@ Initialize the grid and block dimensions here
 
+
   gpuTKTime_start(Compute, "Performing CUDA computation");
   //@@ Launch the GPU Kernel here
+  matrixMultiplyShared<<<gridDim, blockDim>>>(deviceA, deviceB, deviceC,
+                                              numARows, numAColumns, numBRows,
+                                              numBColumns, numCRows,
+                                              numCColumns);
 
   cudaDeviceSynchronize();
   gpuTKTime_stop(Compute, "Performing CUDA computation");
 
   gpuTKTime_start(Copy, "Copying output memory to the CPU");
   //@@ Copy the GPU memory back to the CPU here
+  cudaMemcpy(hostC, deviceC, numCRows * numCColumns * sizeof(float),
+             cudaMemcpyDeviceToHost);
+
 
   gpuTKTime_stop(Copy, "Copying output memory to the CPU");
 
   gpuTKTime_start(GPU, "Freeing GPU Memory");
   //@@ Free the GPU memory here
+  cudaFree(deviceA);
+  cudaFree(deviceB);
+  cudaFree(deviceC);
 
   gpuTKTime_stop(GPU, "Freeing GPU Memory");
 
