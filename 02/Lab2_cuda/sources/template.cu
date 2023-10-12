@@ -113,7 +113,9 @@ int main(int argc, char **argv) {
 
   gpuTKTime_start(Compute, "Performing CUDA computation");
   //@@ Launch the GPU Kernel here
-  matrixMultiplyShared<<<gridDim, blockDim>>>(deviceA, deviceB, deviceC,
+
+
+  matrixMultiplyShared<<<(numCRows / 32 + 1) * (numCColumns / 32 + 1), 32 * 32>>>(deviceA, deviceB, deviceC,
                                               numARows, numAColumns, numBRows,
                                               numBColumns, numCRows,
                                               numCColumns);
