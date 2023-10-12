@@ -10,6 +10,8 @@
     }                                                                     \
   } while (0)
 
+#define TILE_WIDTH 32
+
 // Compute C = A * B
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
                                      int numARows, int numAColumns,
@@ -18,8 +20,8 @@ __global__ void matrixMultiplyShared(float *A, float *B, float *C,
   //@@ Insert code to implement matrix multiplication here
   //@@ You have to use shared memory for this lab
 
-  __shared__ float ds_A[32][32];
-  __shared__ float ds_B[32][32];
+  __shared__ float ds_A[TILE_WIDTH][TILE_WIDTH];
+  __shared__ float ds_B[TILE_WIDTH][TILE_WIDTH];
 
   int bx = blockIdx.x;
   int by = blockIdx.y;
@@ -31,25 +33,26 @@ __global__ void matrixMultiplyShared(float *A, float *B, float *C,
 
   float Cvalue = 0.0;
 
-  for (int m = 0; m < (numAColumns - 1) / 32 + 1; ++m) {
-    if (Row < numARows && m * 32 + tx < numAColumns) {
-      ds_A[ty][tx] = A[Row * numAColumns + m * 32 + tx];
+  for (int p = 0; p < (numAColumns - 1) / TILE_WIDTH + 1; ++p) {
+    if (Row < numARows && p * TILE_WIDTH + tx < numAColumns) {
+      ds_A[ty][tx] = A[Row * numAColumns + p * TILE_WIDTH + tx];
     } else {
       ds_A[ty][tx] = 0.0;
     }
 
-    if (m * 32 + ty < numBRows && Col < numBColumns) {
-      ds_B[ty][tx] = B[(m * 32 + ty) * numBColumns + Col];
+    if (p * TILE_WIDTH + ty < numBRows && Col < numBColumns) {
+      ds_B[ty][tx] = B[(p * TILE_WIDTH + ty) * numBColumns + Col];
     } else {
       ds_B[ty][tx] = 0.0;
     }
-
     __syncthreads();
 
-    for (int k = 0; k < 32; ++k) {
-      Cvalue += ds_A[ty][k] * ds_B[k][tx];
+    if (Row < numCRows && Col < numCColumns)
+    {
+      for (int k = 0; k < TILE_WIDTH; ++k) {
+        Cvalue += ds_A[ty][k] * ds_B[k][tx];
+      }
     }
-
     __syncthreads();
   }
 
@@ -82,9 +85,10 @@ int main(int argc, char **argv) {
   hostB = (float *)gpuTKImport(gpuTKArg_getInputFile(args, 1), &numBRows,
                             &numBColumns);
   //@@ Set numCRows and numCColumns
-  numCRows    = 0;
-  numCColumns = 0;
+  numCRows    = numARows;
+  numCColumns = numBColumns;
   //@@ Allocate the hostC matrix
+  hostC = (float *)malloc(numCRows * numCColumns * sizeof(float));
   gpuTKTime_stop(Generic, "Importing data and creating memory on host");
 
   gpuTKLog(TRACE, "The dimensions of A are ", numARows, " x ", numAColumns);
@@ -109,16 +113,15 @@ int main(int argc, char **argv) {
   gpuTKTime_stop(GPU, "Copying input memory to the GPU.");
 
   //@@ Initialize the grid and block dimensions here
-
+  dim3 block_dim(TILE_WIDTH, TILE_WIDTH);
+  dim3 grid_dim((numCColumns - 1) / TILE_WIDTH + 1,
+                (numCRows - 1) / TILE_WIDTH + 1);
 
   gpuTKTime_start(Compute, "Performing CUDA computation");
   //@@ Launch the GPU Kernel here
-
-
-  matrixMultiplyShared<<<(numCRows / 32 + 1) * (numCColumns / 32 + 1), 32 * 32>>>(deviceA, deviceB, deviceC,
-                                              numARows, numAColumns, numBRows,
-                                              numBColumns, numCRows,
-                                              numCColumns);
+  matrixMultiplyShared<<<grid_dim, block_dim>>>(
+      deviceA, deviceB, deviceC, numARows, numAColumns, numBRows, numBColumns,
+      numCRows, numCColumns);
 
   cudaDeviceSynchronize();
   gpuTKTime_stop(Compute, "Performing CUDA computation");
@@ -127,7 +130,6 @@ int main(int argc, char **argv) {
   //@@ Copy the GPU memory back to the CPU here
   cudaMemcpy(hostC, deviceC, numCRows * numCColumns * sizeof(float),
              cudaMemcpyDeviceToHost);
-
 
   gpuTKTime_stop(Copy, "Copying output memory to the CPU");
 

@@ -3,10 +3,12 @@
 # Define the command template with a placeholder for the number
 command="./TiledGEMM_template -e TiledMatrixMultiplication/Dataset/NUM/output.raw -i TiledMatrixMultiplication/Dataset/NUM/input0.raw,TiledMatrixMultiplication/Dataset/NUM/input1.raw -t vector"
 
+make template
+rm -r output
 mkdir output
 
 # Loop from 0 to 9 to replace the placeholder and run the command
-for number in {0..9}; do
+for number in {0..8}; do
     # Replace the placeholder with the current number
     modified_command="${command//NUM/$number}"
 
