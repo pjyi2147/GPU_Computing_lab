@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>report.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h3 id="csed-490c">CSED 490C</h3>
+<h3 id="lab-3">LAB 3</h3>
+<h3 id="jeongseop-yi-49004543">Jeongseop Yi (49004543)</h3>
+<h4 id="q1">Q1</h4>
+<p>In each stream, there are <code>2 * cnt * sizeof(float)</code> bytes of data are moved from host to device. In total, there are <code>2 * inputLength * sizeof(float)</code> bytes of data are moved from host to device.</p>
+<h4 id="q2">Q2</h4>
+<p>Pinned memory refers to an allocation of virtual memory on host for exclusive access by the GPU.</p>
+<p>Therefore, one should consider using pinned memory when there is a lot of data transfer between GPU device and the host.</p>
+<p>Also, as the pinned memory stays on the host memory, to support async memory operations, it is often required to use pinned memory.</p>
+<p>Pinned memory does not require an implicit copy from host memory, which saves the host memory bandwidth and enables faster data transfer between host and GPU.</p>
+<h4 id="q4--q5">Q4 &amp; Q5</h4>
+<p>System information: CSE-EDU cluster with srun command (titanxp) with 256 block size.</p>
+<p><img src="file:///home/jeongseopyi/CSED490C/lab/03/report/Execution times based on the number of streams.png" alt=""></p>
+<p>Raw data:</p>
+<table>
+<thead>
+<tr>
+<th>Size</th>
+<th style="text-align:right">1</th>
+<th style="text-align:right">2</th>
+<th style="text-align:right">4</th>
+<th style="text-align:right">8</th>
+<th style="text-align:right">16</th>
+<th style="text-align:right">24</th>
+<th style="text-align:right">32</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>16</td>
+<td style="text-align:right">0.119752</td>
+<td style="text-align:right">0.128109</td>
+<td style="text-align:right">0.198017</td>
+<td style="text-align:right">0.257453</td>
+<td style="text-align:right">0.337547</td>
+<td style="text-align:right">0.632046</td>
+<td style="text-align:right">0.669443</td>
+</tr>
+<tr>
+<td>64</td>
+<td style="text-align:right">0.112953</td>
+<td style="text-align:right">0.118043</td>
+<td style="text-align:right">0.152927</td>
+<td style="text-align:right">0.226408</td>
+<td style="text-align:right">0.314027</td>
+<td style="text-align:right">0.703569</td>
+<td style="text-align:right">0.613272</td>
+</tr>
+<tr>
+<td>93</td>
+<td style="text-align:right">0.084853</td>
+<td style="text-align:right">0.100635</td>
+<td style="text-align:right">0.123166</td>
+<td style="text-align:right">0.193246</td>
+<td style="text-align:right">0.281561</td>
+<td style="text-align:right">0.771914</td>
+<td style="text-align:right">0.539739</td>
+</tr>
+<tr>
+<td>112</td>
+<td style="text-align:right">0.078705</td>
+<td style="text-align:right">0.099164</td>
+<td style="text-align:right">0.125001</td>
+<td style="text-align:right">0.187266</td>
+<td style="text-align:right">0.568077</td>
+<td style="text-align:right">0.443868</td>
+<td style="text-align:right">0.48545</td>
+</tr>
+<tr>
+<td>1120</td>
+<td style="text-align:right">0.07891</td>
+<td style="text-align:right">0.097602</td>
+<td style="text-align:right">0.2608</td>
+<td style="text-align:right">0.188069</td>
+<td style="text-align:right">0.325492</td>
+<td style="text-align:right">0.821562</td>
+<td style="text-align:right">0.84</td>
+</tr>
+<tr>
+<td>9921</td>
+<td style="text-align:right">0.100721</td>
+<td style="text-align:right">0.123453</td>
+<td style="text-align:right">0.173905</td>
+<td style="text-align:right">0.242378</td>
+<td style="text-align:right">0.359857</td>
+<td style="text-align:right">0.61922</td>
+<td style="text-align:right">0.760629</td>
+</tr>
+<tr>
+<td>14000</td>
+<td style="text-align:right">0.121778</td>
+<td style="text-align:right">0.128389</td>
+<td style="text-align:right">0.201847</td>
+<td style="text-align:right">0.246471</td>
+<td style="text-align:right">0.376275</td>
+<td style="text-align:right">0.430965</td>
+<td style="text-align:right">0.593943</td>
+</tr>
+<tr>
+<td>25365</td>
+<td style="text-align:right">0.140144</td>
+<td style="text-align:right">0.156506</td>
+<td style="text-align:right">0.259839</td>
+<td style="text-align:right">0.269761</td>
+<td style="text-align:right">0.410542</td>
+<td style="text-align:right">0.565409</td>
+<td style="text-align:right">0.669685</td>
+</tr>
+<tr>
+<td>48000</td>
+<td style="text-align:right">0.174405</td>
+<td style="text-align:right">0.186103</td>
+<td style="text-align:right">0.239172</td>
+<td style="text-align:right">0.269613</td>
+<td style="text-align:right">0.389886</td>
+<td style="text-align:right">0.519939</td>
+<td style="text-align:right">0.716519</td>
+</tr>
+<tr>
+<td>96000</td>
+<td style="text-align:right">0.280555</td>
+<td style="text-align:right">0.29057</td>
+<td style="text-align:right">0.361885</td>
+<td style="text-align:right">0.372482</td>
+<td style="text-align:right">0.532907</td>
+<td style="text-align:right">0.648405</td>
+<td style="text-align:right">0.685629</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

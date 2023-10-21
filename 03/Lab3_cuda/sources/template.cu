@@ -44,6 +44,8 @@ int main(int argc, char **argv) {
     cudaStreamCreate(&stream[s]);
   }
 
+  gpuTKTime_stop(GPU, "Allocating Pinned memory.");
+
   //@@ Calculate data segment size of input data processed by each stream
   int streamSize = (inputLength + numStreams - 1) / numStreams;
 
@@ -65,7 +67,7 @@ int main(int argc, char **argv) {
       deviceInput2 + s * streamSize,
       hostInput2 + s * streamSize,
       cnt * sizeof(float), cudaMemcpyHostToDevice, stream[s]);
-      
+
           //@@ Invoke CUDA Kernel
           //@@ Determine grid and thread block sizes (consider ococupancy)
     int blockSize = 256;
