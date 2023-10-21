@@ -52,19 +52,20 @@ int main(int argc, char **argv) {
   for (unsigned int s = 0; s < numStreams; s++){
           //@@ Asynchronous copy data to the device memory in segments
           //@@ Calculate starting and ending indices for per-stream data
-    cudaMemcpyAsync(
-      deviceInput1 + s * streamSize,
-      hostInput1 + s * streamSize,
-      streamSize * sizeof(float), cudaMemcpyHostToDevice, stream[s]);
-    cudaMemcpyAsync(
-      deviceInput2 + s * streamSize,
-      hostInput2 + s * streamSize,
-      streamSize * sizeof(float), cudaMemcpyHostToDevice, stream[s]);
-
     int cnt = streamSize;
     if (s == numStreams - 1){
       cnt = inputLength - s * streamSize;
     }
+
+    cudaMemcpyAsync(
+      deviceInput1 + s * streamSize,
+      hostInput1 + s * streamSize,
+      cnt * sizeof(float), cudaMemcpyHostToDevice, stream[s]);
+    cudaMemcpyAsync(
+      deviceInput2 + s * streamSize,
+      hostInput2 + s * streamSize,
+      cnt * sizeof(float), cudaMemcpyHostToDevice, stream[s]);
+      
           //@@ Invoke CUDA Kernel
           //@@ Determine grid and thread block sizes (consider ococupancy)
     int blockSize = 256;
