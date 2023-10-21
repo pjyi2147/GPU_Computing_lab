@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   float *deviceInput1;
   float *deviceInput2;
   float *deviceOutput;
-  unsigned int numStreams;
+  unsigned int numStreams = 32;
 
   args = gpuTKArg_read(argc, argv);
 
@@ -34,35 +34,68 @@ int main(int argc, char **argv) {
   gpuTKTime_start(GPU, "Allocating Pinned memory.");
 
   //@@ Allocate GPU memory here using pinned memory here
+  cudaMallocHost((void**)&deviceInput1, inputLength * sizeof(float));
+  cudaMallocHost((void**)&deviceInput2, inputLength * sizeof(float));
+  cudaMallocHost((void**)&deviceOutput, inputLength * sizeof(float));
 
-  //@@ Create and setup streams 
-  //@@ Calculate data segment size of input data processed by each stream 
+  //@@ Create and setup streams
+  cudaStream_t stream[numStreams];
+  for (int s = 0; s < numStreams; s++){
+    cudaStreamCreate(&stream[s]);
+  }
 
- 
+  //@@ Calculate data segment size of input data processed by each stream
+  int streamSize = (inputLength + numStreams - 1) / numStreams;
+
   gpuTKTime_start(Compute, "Performing CUDA computation");
-  //@@ Perform parallel vector addition with different streams. 
-  for (unsigned int s = 0; s<numStreams; s++){
-          //@@ Asynchronous copy data to the device memory in segments 
+  //@@ Perform parallel vector addition with different streams.
+  for (unsigned int s = 0; s < numStreams; s++){
+          //@@ Asynchronous copy data to the device memory in segments
           //@@ Calculate starting and ending indices for per-stream data
+    cudaMemcpyAsync(
+      deviceInput1 + s * streamSize,
+      hostInput1 + s * streamSize,
+      streamSize * sizeof(float), cudaMemcpyHostToDevice, stream[s]);
+    cudaMemcpyAsync(
+      deviceInput2 + s * streamSize,
+      hostInput2 + s * streamSize,
+      streamSize * sizeof(float), cudaMemcpyHostToDevice, stream[s]);
 
+    int cnt = streamSize;
+    if (s == numStreams - 1){
+      cnt = inputLength - s * streamSize;
+    }
           //@@ Invoke CUDA Kernel
-          //@@ Determine grid and thread block sizes (consider ococupancy)     
-
-          //@@ Asynchronous copy data from the device memory in segments 
-
+          //@@ Determine grid and thread block sizes (consider ococupancy)
+    int blockSize = 256;
+    int gridSize = (cnt + blockSize - 1) / blockSize;
+    vecAdd<<<gridSize, blockSize, 0, stream[s]>>>(
+      deviceInput1 + s * streamSize,
+      deviceInput2 + s * streamSize,
+      deviceOutput + s * streamSize,
+      cnt);
+          //@@ Asynchronous copy data from the device memory in segments
+    cudaMemcpyAsync(
+      hostOutput + s * streamSize,
+      deviceOutput + s * streamSize,
+      cnt * sizeof(float), cudaMemcpyDeviceToHost, stream[s]);
   }
 
   //@@ Synchronize
-
+  cudaDeviceSynchronize();
   gpuTKTime_stop(Compute, "Performing CUDA computation");
 
 
   gpuTKTime_start(GPU, "Freeing Pinned Memory");
   //@@ Destory cudaStream
-
+  for (unsigned int s = 0; s<numStreams; s++){
+    cudaStreamDestroy(stream[s]);
+  }
 
   //@@ Free the GPU memory here
-
+  cudaFreeHost(deviceInput1);
+  cudaFreeHost(deviceInput2);
+  cudaFreeHost(deviceOutput);
 
   gpuTKTime_stop(GPU, "Freeing Pinned Memory");
 
