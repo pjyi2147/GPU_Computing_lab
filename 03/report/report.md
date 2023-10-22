@@ -4,7 +4,9 @@
 
 #### Q1
 
-In each stream, there are `2 * cnt * sizeof(float)` bytes of data are moved from host to device. In total, there are `2 * inputLength * sizeof(float)` bytes of data are moved from host to device.
+`cnt = min(streamSize, inputSize - (numStreams - 1) * streamSize)`
+
+In each stream, there are `2 * cnt * sizeof(float)` bytes of data are moved from host to device. In total, there are `2 * inputLength * sizeof(float)` bytes of data are moved from host to device (input1, input2).
 
 #### Q2
 
@@ -20,7 +22,7 @@ Pinned memory does not require an implicit copy from host memory, which saves th
 
 System information: CSE-EDU cluster with srun command (titanxp) with 256 block size.
 
-![](<Execution times based on the number of streams.png>)
+![](https://github.com/pjyi2147/acmicpc/assets/21299683/2524f6cf-9172-4fc0-982c-54eee529cf15)
 
 Raw data:
 
