@@ -14,41 +14,181 @@
 #define TILE_WIDTH 16
 #define w (TILE_WIDTH + Mask_width - 1)
 #define clamp(x) (min(max((x), 0.0), 1.0))
+#define Image_channels 3
 
 //@@ INSERT CODE HERE
-__global__ void convolution(float* deviceInputImageData, float* deviceOutputImageData,
-                            const float * __restrict__ deviceMaskData, int imageChannels, int imageWidth,
-                            int imageHeight) {
-  __shared__ float ds_Mask[Mask_width][Mask_width];
+__global__ void convolution(
+  float* deviceInputImageData, float* deviceOutputImageData, const float * __restrict__ deviceMaskData,
+  int imageWidth, int imageHeight)
+{
+  int bx = blockIdx.x;
+  int by = blockIdx.y;
   int tx = threadIdx.x;
   int ty = threadIdx.y;
-  int row_o = blockIdx.y * TILE_WIDTH + ty;
-  int col_o = blockIdx.x * TILE_WIDTH + tx;
-  int row_i = row_o - Mask_radius;
-  int col_i = col_o - Mask_radius;
-  if ((row_i >= 0) && (row_i < imageHeight) && (col_i >= 0) &&
-      (col_i < imageWidth)) {
-    ds_Mask[ty][tx] = deviceMaskData[ty * Mask_width + tx];
-  } else {
-    ds_Mask[ty][tx] = 0.0;
+  int tz = threadIdx.z;
+
+  // this is the output tile
+  int row_o = by * blockDim.y + ty;
+  int col_o = bx * blockDim.x + tx;
+
+  __shared__ float ds_image[w][w][Image_channels];
+
+  if (row_o >= imageHeight || col_o >= imageWidth)
+  {
+    return;
+  }
+
+  // copy current tile first
+  ds_image[ty + Mask_radius][tx + Mask_radius][tz] = deviceInputImageData[(row_o * imageWidth + col_o) * Image_channels + tz];
+
+  // copy left
+  if (tx == 0)
+  {
+    for (int i = -Mask_radius; i < 0; i++)
+    {
+      if (col_o + i >= 0)
+      {
+        ds_image[ty + Mask_radius][tx + Mask_radius + i][tz] = deviceInputImageData[(row_o * imageWidth + col_o + i) * Image_channels + tz];
+      }
+      else
+      {
+        ds_image[ty + Mask_radius][tx + Mask_radius + i][tz] = 0.0;
+      }
+    }
+  }
+  // copy right
+  if (tx == TILE_WIDTH - 1)
+  {
+    for (int i = 1; i <= Mask_radius; i++)
+    {
+      if (col_o + i < imageWidth)
+      {
+        ds_image[ty + Mask_radius][tx + Mask_radius + i][tz] = deviceInputImageData[(row_o * imageWidth + col_o + i) * Image_channels + tz];
+      }
+      else
+      {
+        ds_image[ty + Mask_radius][tx + Mask_radius + i][tz] = 0.0;
+      }
+    }
+  }
+
+  // copy top
+  if (ty == 0)
+  {
+    for (int i = -Mask_radius; i < 0; i++)
+    {
+      if (row_o + i >= 0)
+      {
+        ds_image[ty + Mask_radius + i][tx + Mask_radius][tz] = deviceInputImageData[((row_o + i) * imageWidth + col_o) * Image_channels + tz];
+      }
+      else
+      {
+        ds_image[ty + Mask_radius + i][tx + Mask_radius][tz] = 0.0;
+      }
+    }
+  }
+  // copy bottom
+  if (ty == TILE_WIDTH - 1)
+  {
+    for (int i = 1; i <= Mask_radius; i++)
+    {
+      if (row_o + i < imageHeight)
+      {
+        ds_image[ty + Mask_radius + i][tx + Mask_radius][tz] = deviceInputImageData[((row_o + i) * imageWidth + col_o) * Image_channels + tz];
+      }
+      else
+      {
+        ds_image[ty + Mask_radius + i][tx + Mask_radius][tz] = 0.0;
+      }
+    }
   }
   __syncthreads();
-  float output = 0.0;
-  if (ty < TILE_WIDTH && tx < TILE_WIDTH) {
-    for (int i = 0; i < Mask_width; i++) {
-      for (int j = 0; j < Mask_width; j++) {
-        int row = row_i + i;
-        int col = col_i + j;
-        if (row >= 0 && row < imageHeight && col >= 0 && col < imageWidth) {
-          output += deviceInputImageData[(row * imageWidth + col) * imageChannels +
-                                         blockIdx.z] *
-                    ds_Mask[i][j];
+
+  // copy top left
+  if (ty == 0 && tx == 0)
+  {
+    for (int i = -Mask_radius; i < 0; i++)
+    {
+      for (int j = -Mask_radius; j < 0; j++)
+      {
+        if (row_o + i >= 0 && col_o + j >= 0)
+        {
+          ds_image[ty + Mask_radius + i][tx + Mask_radius + j][tz] = deviceInputImageData[((row_o + i) * imageWidth + col_o + j) * Image_channels + tz];
+        }
+        else
+        {
+          ds_image[ty + Mask_radius + i][tx + Mask_radius + j][tz] = 0.0;
         }
       }
     }
-    deviceOutputImageData[(row_o * imageWidth + col_o) * imageChannels +
-                          blockIdx.z] = clamp(output);
   }
+  // copy top right
+  if (ty == 0 && tx == TILE_WIDTH - 1)
+  {
+    for (int i = -Mask_radius; i < 0; i++)
+    {
+      for (int j = 1; j <= Mask_radius; j++)
+      {
+        if (row_o + i >= 0 && col_o + j < imageWidth)
+        {
+          ds_image[ty + Mask_radius + i][tx + Mask_radius + j][tz] = deviceInputImageData[((row_o + i) * imageWidth + col_o + j) * Image_channels + tz];
+        }
+        else
+        {
+          ds_image[ty + Mask_radius + i][tx + Mask_radius + j][tz] = 0.0;
+        }
+      }
+    }
+  }
+  // copy bottom left
+  if (ty == TILE_WIDTH - 1 && tx == 0)
+  {
+    for (int i = 1; i <= Mask_radius; i++)
+    {
+      for (int j = -Mask_radius; j < 0; j++)
+      {
+        if (row_o + i < imageHeight && col_o + j >= 0)
+        {
+          ds_image[ty + Mask_radius + i][tx + Mask_radius + j][tz] = deviceInputImageData[((row_o + i) * imageWidth + col_o + j) * Image_channels + tz];
+        }
+        else
+        {
+          ds_image[ty + Mask_radius + i][tx + Mask_radius + j][tz] = 0.0;
+        }
+      }
+    }
+  }
+  // copy bottom right
+  if (ty == TILE_WIDTH - 1 && tx == TILE_WIDTH - 1)
+  {
+    for (int i = 1; i <= Mask_radius; i++)
+    {
+      for (int j = 1; j <= Mask_radius; j++)
+      {
+        if (row_o + i < imageHeight && col_o + j < imageWidth)
+        {
+          ds_image[ty + Mask_radius + i][tx + Mask_radius + j][tz] = deviceInputImageData[((row_o + i) * imageWidth + col_o + j) * Image_channels + tz];
+        }
+        else
+        {
+          ds_image[ty + Mask_radius + i][tx + Mask_radius + j][tz] = 0.0;
+        }
+      }
+    }
+  }
+  __syncthreads();
+
+  float output = 0.0;
+  for (int i = 0; i < Mask_width; i++)
+  {
+    for (int j = 0; j < Mask_width; j++)
+    {
+      int row = ty + i;
+      int col = tx + j;
+      output += ds_image[row][col][tz] * deviceMaskData[i * Mask_width + j];
+    }
+  }
+  deviceOutputImageData[(row_o * imageWidth + col_o) * Image_channels + tz] = clamp(output);
 }
 
 int main(int argc, char *argv[]) {
@@ -84,6 +224,8 @@ int main(int argc, char *argv[]) {
   imageHeight   = gpuTKImage_getHeight(inputImage);
   imageChannels = gpuTKImage_getChannels(inputImage);
 
+  assert(imageChannels == Image_channels);
+
   outputImage = gpuTKImage_new(imageWidth, imageHeight, imageChannels);
 
   hostInputImageData  = gpuTKImage_getData(inputImage);
@@ -111,11 +253,11 @@ int main(int argc, char *argv[]) {
 
   gpuTKTime_start(Compute, "Doing the computation on the GPU");
   //@@ INSERT CODE HERE
-  dim3 dimGrid(ceil(imageWidth / TILE_WIDTH), ceil(imageHeight / TILE_WIDTH),
-               1);
-  dim3 dimBlock(TILE_WIDTH, TILE_WIDTH, 1);
-  convolution<<<dimGrid, dimBlock>>>(deviceInputImageData, deviceMaskData,
-                                     deviceOutputImageData, imageChannels,
+  int gridx = (imageWidth - 1) / TILE_WIDTH + 1;
+  int gridy = (imageHeight - 1) / TILE_WIDTH + 1;
+  dim3 dimGrid(gridx, gridy, 1);
+  dim3 dimBlock(TILE_WIDTH, TILE_WIDTH, 3);
+  convolution<<<dimGrid, dimBlock>>>(deviceInputImageData, deviceOutputImageData, deviceMaskData,
                                      imageWidth, imageHeight);
   gpuTKTime_stop(Compute, "Doing the computation on the GPU");
 
