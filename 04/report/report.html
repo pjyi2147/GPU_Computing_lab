@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>report.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h3 id="csed-490c">CSED 490C</h3>
+<h3 id="lab-3">LAB 3</h3>
+<h3 id="jeongseop-yi-49004543">Jeongseop Yi (49004543)</h3>
+<h4 id="q1">Q1</h4>
+<p>in each cell, there are <code>MASK_SIZE * MASK_SIZE</code> floating point muliplication and addition, respectively.
+As there is <code>imageWidth * imageHeight</code> number of cells, there are <code>MASK_SIZE * MASK_SIZE * imageWidth * imageHeight</code> floating point muliplication and addition, respectively.</p>
+<h4 id="q2">Q2</h4>
+<p>Let <code>w = TILE_WIDTH + Mask_width - 1</code>.
+In each thread block, there are <code>w * w * Image_channels * sizeof(float)</code> bytes of memory read.</p>
+<p>There are <code>gridx = (imageWidth - 1) / TILE_WIDTH + 1</code> number of thread blocks on x axis and <code>gridy = (imageHeight - 1) / TILE_WIDTH + 1</code> number of thread blocks on y axis.</p>
+<p>There are total of <code>gridx * gridy</code> thread blocks for the image.</p>
+<p>There are total of <code>gridx * gridy * w * w * Image_channels * sizeof(float)</code> bytes of global memory read for the image.</p>
+<h4 id="q3">Q3</h4>
+<p>As we are implementing &quot;output tiling method&quot;, all thread writes to global memory unless the thread is outside of image.</p>
+<p>Each thread only writes to the global memory when it needs write a final output, which is a single float value.</p>
+<p>Thus, the total global memory writes of the kernel for the image is <code>imageWidth * imageHeight * sizeof(float)</code> bytes.</p>
+<h4 id="q4">Q4</h4>
+<p>Allocating GPU device memory, copying the data to device memory, retriving data from device memory to host, and freeing the GPU memory all counts as an overhead.</p>
+<p>The memory allocation, copy, and free times are dominated by the size of the image, which is <code>imageWidth * imageHeight</code>. The overhead runtime grows linearly to the size of the image.</p>
+<h4 id="q5">Q5</h4>
+<p>The shared memory usage will increase as the mask size increases along with the global memory reads. There will be more floating point operation by the square of the increase of the mask size. There is no change with the global memory write as the image size does not change.</p>
+<p>The kernel will be spending most of its runtime copying the halo cells required for the convolution when the mask size increases to 1024.</p>
+<p>The shared memory will hit its limit as &quot;each&quot; thread block requires at least 4MB (4 * 1024 * 1024 bytes, which is just the mask dimension) of shared memory, which hinders the efficient parallel computation due to a lack of shared memory resource. The thread blocks may not be sufficiently allocated to SM due to the shared memory limit.</p>
+<h4 id="q7">Q7</h4>
+<p>The kernel was run on RTX 3060ti with 8GB vram on Windows 11 WSL2 ubuntu 22.04</p>
+<p>The runtime graph is as follows:</p>
+<p><img src="https://github.com/pjyi2147/acmicpc/assets/21299683/8d6434e0-1e3b-4a3d-a692-ce92e27d45c4" alt=""></p>
+<p>The raw data table is as follows:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>GPU allocation</th>
+<th>Copy to GPU</th>
+<th>Computation</th>
+<th>Copy to Host</th>
+<th>Memory + Compute</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>64x64</td>
+<td>0.308276</td>
+<td>0.374956</td>
+<td>0.048069</td>
+<td>0.061519</td>
+<td>0.85078</td>
+</tr>
+<tr>
+<td>64x128</td>
+<td>0.255407</td>
+<td>0.263857</td>
+<td>0.044749</td>
+<td>0.074269</td>
+<td>0.697082</td>
+</tr>
+<tr>
+<td>256x256</td>
+<td>0.255779</td>
+<td>0.290187</td>
+<td>0.062469</td>
+<td>0.284727</td>
+<td>0.960211</td>
+</tr>
+<tr>
+<td>256x512</td>
+<td>0.458965</td>
+<td>0.349187</td>
+<td>0.08043</td>
+<td>0.535534</td>
+<td>1.48657</td>
+</tr>
+<tr>
+<td>1024x1024</td>
+<td>0.708622</td>
+<td>1.66213</td>
+<td>0.345206</td>
+<td>2.98244</td>
+<td>5.85018</td>
+</tr>
+<tr>
+<td>4096x2048</td>
+<td>1.75634</td>
+<td>13.4847</td>
+<td>2.39836</td>
+<td>16.0602</td>
+<td>33.789</td>
+</tr>
+<tr>
+<td>8192x8192</td>
+<td>8.4046</td>
+<td>106.678</td>
+<td>20.3233</td>
+<td>136.14</td>
+<td>271.664</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

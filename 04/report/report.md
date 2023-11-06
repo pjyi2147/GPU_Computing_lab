@@ -43,7 +43,7 @@ The shared memory will hit its limit as "each" thread block requires at least 4M
 
 #### Q7
 
-The kernel was run on 3060 ti with 8 vram on windows 11 WSL ubuntu 22.04
+The kernel was run on RTX 3060ti with 8GB vram on Windows 11 WSL2 ubuntu 22.04
 
 The runtime graph is as follows:
 
