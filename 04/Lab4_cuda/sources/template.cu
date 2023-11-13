@@ -32,6 +32,7 @@ __global__ void convolution(
   int col_o = bx * blockDim.x + tx;
 
   __shared__ float ds_image[w][w][Image_channels];
+  memset(ds_image, 0.0, w * w * Image_channels * sizeof(float));
 
   if (row_o >= imageHeight || col_o >= imageWidth)
   {

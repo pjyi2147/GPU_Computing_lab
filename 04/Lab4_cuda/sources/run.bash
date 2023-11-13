@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the command template with a placeholder for the number
-command="./Convolution_template -e Convolution/Dataset/NUM/output.ppm -i Convolution/Dataset/NUM/input0.ppm,Convolution/Dataset/NUM/input1.raw -t image"
+command="./Convolution_template -e Convolution/Dataset/NUM/output.ppm -i Convolution/Dataset/NUM/input0.ppm,Convolution/Dataset/NUM/input1.raw -o output/NUM.ppm -t image"
 
 make template
 rm -r output
