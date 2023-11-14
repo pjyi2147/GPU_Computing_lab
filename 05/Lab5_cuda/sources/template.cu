@@ -1,6 +1,7 @@
 #include <gputk.h>
 
 #define NUM_BINS 4096
+#define BLOCK_SIZE 1024
 
 #define CUDA_CHECK(ans)                                                   \
   { gpuAssert((ans), __FILE__, __LINE__); }
@@ -14,16 +15,41 @@ inline void gpuAssert(cudaError_t code, const char *file, int line,
   }
 }
 
-void histogram(unsigned int *input, unsigned int *bins,
-               unsigned int num_elements, unsigned int num_bins) {
+__global__ void histogram(unsigned int *input, unsigned int *bins,
+                          unsigned int num_elements)
+{
   __shared__ unsigned int private_histo[NUM_BINS];
-  int i = threadIdx.x + blockDim.x * blockIdx.x;
-  int stride = blockDim.x * gridDim.x;
-  while (i < num_elements) {
-    atomicAdd(&(private_histo[input[i]]), 1);
-    i += stride;
+  int shared_idx = threadIdx.x;
+  while (shared_idx < NUM_BINS)
+  {
+    private_histo[shared_idx] = 0;
+    shared_idx += blockDim.x;
   }
   __syncthreads();
+
+  int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
+  int stride = blockDim.x;
+  while (thread_idx < num_elements)
+  {
+    atomicAdd(&(private_histo[input[thread_idx]]), 1);
+    thread_idx += stride;
+  }
+  __syncthreads();
+
+  int shared_idx2 = threadIdx.x;
+  while (shared_idx2 < NUM_BINS)
+  {
+    atomicAdd(&(bins[shared_idx2]), private_histo[shared_idx2]);
+    shared_idx2 += blockDim.x;
+  }
+  __syncthreads();
+
+  shared_idx2 = threadIdx.x;
+  while (shared_idx2 < NUM_BINS)
+  {
+    atomicMin(&(bins[shared_idx2]), 127);
+    shared_idx2 += blockDim.x;
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -56,6 +82,7 @@ int main(int argc, char *argv[]) {
   //@@ Copy memory to the GPU here
   cudaMemcpy(deviceInput, hostInput, inputLength * sizeof(unsigned int),
              cudaMemcpyHostToDevice);
+  cudaMemset(deviceBins, 0, NUM_BINS * sizeof(unsigned int));
   CUDA_CHECK(cudaDeviceSynchronize());
   gpuTKTime_stop(GPU, "Copying input memory to the GPU.");
 
@@ -64,9 +91,9 @@ int main(int argc, char *argv[]) {
   gpuTKLog(TRACE, "Launching kernel");
   gpuTKTime_start(Compute, "Performing CUDA computation");
   //@@ Perform kernel computation here
-  dim3 dimBlock(1024, 1, 1);
-  dim3 dimGrid((inputLength - 1) / 1024 + 1, 1, 1);
-  histogram<<<dimGrid, dimBlock>>>(deviceInput, deviceBins, inputLength, NUM_BINS);
+  dim3 dimBlock(BLOCK_SIZE, 1, 1);
+  dim3 dimGrid(1, 1, 1);
+  histogram<<<dimGrid, dimBlock>>>(deviceInput, deviceBins, inputLength);
   gpuTKTime_stop(Compute, "Performing CUDA computation");
 
   gpuTKTime_start(Copy, "Copying output memory to the CPU");

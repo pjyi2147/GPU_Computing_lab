@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the command template with a placeholder for the number
-command="./Histogram_template -e Histogram/Dataset/NUM/output.raw -i Histogram/Dataset/NUM/input.raw -t vector"
+command="./Histogram_template -e Histogram/Dataset/NUM/output.raw -i Histogram/Dataset/NUM/input.raw -t integral_vector"
 
 make template
 rm -r output
