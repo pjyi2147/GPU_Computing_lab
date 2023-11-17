@@ -1,4 +1,5 @@
 output
 build
+build-dir
 CMakeFiles
 CMakeCache.txt
