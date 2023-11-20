@@ -67,7 +67,8 @@ __global__ void scan(float *input, float *output, int len) {
       T[index + stride] += T[index];
     }
   }
-
+  __syncthreads();
+  
   // put back to output array
   if (idx < len)
   {
