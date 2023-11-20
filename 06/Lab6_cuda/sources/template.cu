@@ -5,7 +5,7 @@
 
 #include <gputk.h>
 
-#define BLOCK_SIZE 512 //@@ You can change this
+#define BLOCK_SIZE 1024 //@@ You can change this
 
 #define gpuTKCheck(stmt)                                                     \
   do {                                                                    \
@@ -17,15 +17,14 @@
     }                                                                     \
   } while (0)
 
-// __global__ void scan_add(float *output, float *auxOutput, int lenOutput, int lenAuxOutput)
-// {
-//   if (blockIdx.x > 0 && blockIdx.x < lenAuxOutput - 1)
-//   {
-//     int idx = BLOCK_SIZE * blockIdx.x + threadIdx.x;
-//     output[idx] += auxOutput[blockIdx.x - 1];
-//     output[idx + 1] += auxOutput[blockIdx.x - 1];
-//   }
-// }
+__global__ void scan_add(float *output, float *auxOutput, int lenOutput, int lenAuxOutput)
+{
+  int idx = blockDim.x * blockIdx.x + threadIdx.x;
+  if (blockIdx.x >= 1)
+  {
+    output[idx] += auxOutput[blockIdx.x - 1];
+  }
+}
 
 __global__ void scan(float *input, float *output, int len) {
   //@@ Modify the body of this function to complete the functionality of
@@ -68,7 +67,7 @@ __global__ void scan(float *input, float *output, int len) {
     }
   }
   __syncthreads();
-  
+
   // put back to output array
   if (idx < len)
   {
@@ -85,9 +84,9 @@ int main(int argc, char **argv) {
   int numElements; // number of elements in the list
 
   // For aux scan
-  // float *deviceAuxInput;
-  // float *deviceAuxOutput;
-  // int numAuxElements;
+  float *deviceAuxInput;
+  float *deviceAuxOutput;
+  int numAuxElements;
 
   args = gpuTKArg_read(argc, argv);
 
@@ -99,19 +98,20 @@ int main(int argc, char **argv) {
   gpuTKLog(TRACE, "The number of input elements in the input is ",
         numElements);
 
-  // numAuxElements = (numElements - 1) / BLOCK_SIZE + 1;
+  numAuxElements = (numElements - 1) / BLOCK_SIZE + 1;
 
   gpuTKTime_start(GPU, "Allocating GPU memory.");
   gpuTKCheck(cudaMalloc((void **)&deviceInput, numElements * sizeof(float)));
   gpuTKCheck(cudaMalloc((void **)&deviceOutput, numElements * sizeof(float)));
 
-  // gpuTKCheck(cudaMalloc((void **)&deviceAuxInput, numAuxElements * sizeof(float)));
-  // gpuTKCheck(cudaMalloc((void **)&deviceAuxOutput, numAuxElements * sizeof(float)));
+  // aux
+  gpuTKCheck(cudaMalloc((void **)&deviceAuxInput, numAuxElements * sizeof(float)));
+  gpuTKCheck(cudaMalloc((void **)&deviceAuxOutput, numAuxElements * sizeof(float)));
   gpuTKTime_stop(GPU, "Allocating GPU memory.");
 
   gpuTKTime_start(GPU, "Clearing output memory.");
   gpuTKCheck(cudaMemset(deviceOutput, 0, numElements * sizeof(float)));
-  // gpuTKCheck(cudaMemset(deviceAuxOutput, 0, numAuxElements * sizeof(float)));
+  gpuTKCheck(cudaMemset(deviceAuxOutput, 0, numAuxElements * sizeof(float)));
   gpuTKTime_stop(GPU, "Clearing output memory.");
 
   gpuTKTime_start(GPU, "Copying input memory to the GPU.");
@@ -128,18 +128,18 @@ int main(int argc, char **argv) {
   //@@ on the deivce
   scan<<<gridDim, blockDim>>>(deviceInput, deviceOutput, numElements);
 
-  // if (numElements > BLOCK_SIZE)
-  // {
-  //   for (int i = 0; i < numAuxElements; i++)
-  //   {
-  //     deviceAuxInput[i] = deviceOutput[(i + 1) * BLOCK_SIZE - 1];
-  //   }
-  //   dim3 gridDim2((numAuxElements - 1) / BLOCK_SIZE + 1, 1, 1);
-  //   scan<<<gridDim2, blockDim>>>(deviceAuxInput, deviceAuxOutput, numAuxElements);
+  if (numElements > BLOCK_SIZE)
+  {
+    for (int i = 0; i < numAuxElements; i++)
+    {
+      cudaMemcpy(&deviceAuxInput[i], &deviceOutput[(i + 1) * BLOCK_SIZE - 1], sizeof(float), cudaMemcpyDeviceToDevice);
+    }
+    dim3 gridDim2((numAuxElements - 1) / BLOCK_SIZE + 1, 1, 1);
+    scan<<<gridDim2, blockDim>>>(deviceAuxInput, deviceAuxOutput, numAuxElements);
 
-  //   // add scanned block sum i
-  //   scan_add<<<gridDim, blockDim>>>(deviceOutput, deviceAuxOutput, numElements, numAuxElements);
-  // }
+    // add scanned block sum i
+    scan_add<<<gridDim, blockDim>>>(deviceOutput, deviceAuxOutput, numElements, numAuxElements);
+  }
 
   cudaDeviceSynchronize();
   gpuTKTime_stop(Compute, "Performing CUDA computation");
