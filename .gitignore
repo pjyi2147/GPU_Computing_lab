@@ -3,3 +3,5 @@ build
 build-dir
 CMakeFiles
 CMakeCache.txt
+*_template
+*_generator
