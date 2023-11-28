@@ -34,7 +34,8 @@ __global__ void spmv_jds_transposed(JDS_T A, float *B, float *C,
                                     int numBRows, int numBColumns)
 {
   int row_idx = blockIdx.x * blockDim.x + threadIdx.x;
-
+  __shared__ float temp[BLOCK_SIZE];
+  temp[threadIdx.x] = 0;
   for (int i = 0; i < A.jds_t_col_ptr_size - 1; i++)
   {
     int col_idx = A.jds_t_col_ptr[i];
@@ -43,10 +44,10 @@ __global__ void spmv_jds_transposed(JDS_T A, float *B, float *C,
     {
       float data = A.data[col_idx + row_idx];
       int data_col = A.jds_col_idx[col_idx + row_idx];
-      int data_row = A.jds_row_idx[row_idx];
-      C[data_row] += data * B[data_col];
+      temp[threadIdx.x] += data * B[data_col];
     }
   }
+  C[A.jds_row_idx[row_idx]] = temp[threadIdx.x];
 }
 
 
