@@ -2,7 +2,7 @@
 #include <utility>
 #include <algorithm>
 
-#define BLOCK_SIZE 256
+#define BLOCK_SIZE 512
 
 #define gpuTKCheck(stmt)                                                     \
   do {                                                                    \
@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
   gpuTKLog(TRACE, "The dimensions of A are ", numARows, " x ", numAColumns);
   gpuTKLog(TRACE, "The dimensions of B are ", numBRows, " x ", numBColumns);
 
-  gpuTKTime_start(GPU, "Converting matrix A to JDS format (transposed).");
+  gpuTKTime_start(Generic, "Converting matrix A to JDS format (transposed).");
   vector<std::pair<int, int>> mat_count;
   int total_non_zero = 0;
   for (int i = 0; i < numARows; i++)
@@ -175,7 +175,7 @@ int main(int argc, char **argv) {
   jds.jds_row_ptr_size = jds_row_ptr.size();
   jds.jds_t_col_ptr = jds_col_ptr.data();
   jds.jds_t_col_ptr_size = jds_col_ptr.size();
-  gpuTKTime_stop(GPU, "Converting matirx A to JDS format (transposed).");
+  gpuTKTime_stop(Generic, "Converting matrix A to JDS format (transposed).");
 
   gpuTKTime_start(GPU, "Allocating GPU memory.");
   //@@ Allocate GPU memory here
