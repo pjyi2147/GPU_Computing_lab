@@ -12,6 +12,11 @@ v3:
 * Apply threshold to apply CUDA kernel
 * Best perf at 32 * BLOCKSIZE
 
+v4:
+
+* Apply parallel reduction on the max dist calculation
+* Best perf at 32 * BLOCKSIZE (85ms on 2M points)
+
 upgrade room:
 
 * unified memory
