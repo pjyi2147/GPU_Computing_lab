@@ -15,19 +15,14 @@ inline void gpuAssert(cudaError_t code, const char *file, int line,
   }
 }
 
-struct point {
-  float x;
-  float y;
-};
-
 struct pt_idx {
   unsigned idx;
-  point p;
+  float x, y;
 };
 
-int ccw(point p1, point p2, point p)
+int ccw(pt_idx* p1, pt_idx* p2, pt_idx* p)
 {
-  float prod = (p2.x - p1.x) * (p.y - p1.y) - (p2.y - p1.y) * (p.x - p1.x);
+  float prod = (p2->x - p1->x) * (p->y - p1->y) - (p2->y - p1->y) * (p->x - p1->x);
   // printf("p1 = (%f, %f), p2 = (%f, %f), p = (%f, %f), prod = %f\n", p1.x, p1.y, p2.x, p2.y, p.x, p.y, prod);
   if (prod > 0)
   {
@@ -43,9 +38,9 @@ int ccw(point p1, point p2, point p)
   }
 }
 
-float dist(point p1, point p2, point p)
+float dist(pt_idx* p1, pt_idx* p2, pt_idx* p)
 {
-  return abs((p.y - p1.y) * (p2.x - p1.x) - (p.x - p1.x) * (p2.y - p1.y));
+  return abs((p->y - p1->y) * (p2->x - p1->x) - (p->x - p1->x) * (p2->y - p1->y));
 }
 
 static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsigned>& indices)
@@ -58,10 +53,10 @@ static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsig
   }
 
   auto p = pts[0];
-  float max_dist = dist(p1->p, p2->p, p->p);
+  float max_dist = dist(p1, p2, p);
   for (int i = 1; i < pts.size(); i++)
   {
-    float d = dist(p1->p, p2->p, pts[i]->p);
+    float d = dist(p1, p2, pts[i]);
     if (d > max_dist)
     {
       p = pts[i];
@@ -78,13 +73,13 @@ static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsig
       continue;
     }
 
-    int side = ccw(p1->p, p->p, pts[i]->p);
+    int side = ccw(p1, p, pts[i]);
     if (side == 1)
     {
       ac.push_back(pts[i]);
     }
 
-    side = ccw(p->p, p2->p, pts[i]->p);
+    side = ccw(p, p2, pts[i]);
     if (side == 1)
     {
       cb.push_back(pts[i]);
@@ -105,15 +100,15 @@ static int compute(vector<pt_idx*>& pts, vector<unsigned>& indices)
 
   for (int i = 1; i < pts.size() - 1; i++)
   {
-    int side = ccw(left->p, right->p, pts[i]->p);
+    int side = ccw(left, right, pts[i]);
     if (side == 1)
     {
-      printf("pts[%d] = (%f, %f) idx = %u, side = 1\n", i, pts[i]->p.x, pts[i]->p.y, pts[i]->idx);
+      // printf("pts[%d] = (%f, %f) idx = %u, side = 1\n", i, pts[i]->p.x, pts[i]->p.y, pts[i]->idx);
       ccw_pts.push_back(pts[i]);
     }
     else if (side == -1)
     {
-      printf("pts[%d] = (%f, %f) idx = %u, side = -1\n", i, pts[i]->p.x, pts[i]->p.y, pts[i]->idx);
+      // printf("pts[%d] = (%f, %f) idx = %u, side = -1\n", i, pts[i]->p.x, pts[i]->p.y, pts[i]->idx);
       cw_pts.push_back(pts[i]);
     }
   }
@@ -121,10 +116,10 @@ static int compute(vector<pt_idx*>& pts, vector<unsigned>& indices)
   find_hull(ccw_pts, left, right, indices);
   find_hull(cw_pts, right, left, indices);
 
-  for (int i = 0; i < indices.size(); i++)
-  {
-    // printf("indices[%d] = %u\n");
-  }
+  // for (int i = 0; i < indices.size(); i++)
+  // {
+  //   printf("indices[%d] = %u\n");
+  // }
   return indices.size();
 }
 
@@ -149,15 +144,15 @@ int main(int argc, char *argv[]) {
   gpuTKTime_start(Generic, "Create data");
   for (unsigned i = 0; i < inputLength; i++)
   {
-    hostPts[i] = new pt_idx{i, {hostX[i], hostY[i]}};
+    hostPts[i] = new pt_idx{i, hostX[i], hostY[i]};
   }
   std::sort(hostPts.begin(), hostPts.end(), [](const pt_idx* a, const pt_idx* b) {
-    if (a->p.x < b->p.x) {
+    if (a->x < b->x) {
       return true;
-    } else if (a->p.x > b->p.x) {
+    } else if (a->x > b->x) {
       return false;
     } else {
-      return a->p.y < b->p.y;
+      return a->y < b->y;
     }
   });
   gpuTKTime_stop(Generic, "Create data");

@@ -15,17 +15,17 @@ inline void gpuAssert(cudaError_t code, const char *file, int line,
   }
 }
 
-struct point {
-  float x;
-  float y;
-};
-
 struct pt_idx {
   unsigned idx;
-  point p;
+  float x, y;
+
+  bool operator==(const pt_idx& rhs) const
+  {
+    return x == rhs.x && y == rhs.y && idx == rhs.idx;
+  }
 };
 
-int ccw(point p1, point p2, point p)
+int ccw(pt_idx p1, pt_idx p2, pt_idx p)
 {
   float prod = (p2.x - p1.x) * (p.y - p1.y) - (p2.y - p1.y) * (p.x - p1.x);
   if (prod > 0)
@@ -42,28 +42,28 @@ int ccw(point p1, point p2, point p)
   }
 }
 
-float dist(point p1, point p2, point p)
+float dist(pt_idx p1, pt_idx p2, pt_idx p)
 {
   return abs((p.y - p1.y) * (p2.x - p1.x) - (p.x - p1.x) * (p2.y - p1.y));
 }
 
-__global__ void dist(pt_idx* p, float* d, int len, point* p1, point* p2)
+__global__ void dist(pt_idx* p, float* d, int len, pt_idx p1, pt_idx p2)
 {
   int idx = blockIdx.x * blockDim.x + threadIdx.x;
   if (idx < len)
   {
-    point p3 = p[idx].p;
-    d[idx] = abs((p3.y - p1->y) * (p2->x - p1->x) - (p3.x - p1->x) * (p2->y - p1->y));
+    pt_idx p3 = p[idx];
+    d[idx] = abs((p3.y - p1.y) * (p2.x - p1.x) - (p3.x - p1.x) * (p2.y - p1.y));
   }
 }
 
-__global__ void ccw(pt_idx* p, int* d, int len, point* p1, point* p2)
+__global__ void ccw(pt_idx* p, int* d, int len, pt_idx p1, pt_idx p2)
 {
   int idx = blockIdx.x * blockDim.x + threadIdx.x;
   if (idx < len)
   {
-    point p3 = p[idx].p;
-    float prod = (p2->x - p1->x) * (p3.y - p1->y) - (p2->y - p1->y) * (p3.x - p1->x);
+    pt_idx p3 = p[idx];
+    float prod = (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
     // printf("p1 = (%f, %f), p2 = (%f, %f), p = (%f, %f), prod = %f\n", p1->x, p1->y, p2->x, p2->y, p3.x, p3.y, prod);
     if (prod > 0)
     {
@@ -80,38 +80,27 @@ __global__ void ccw(pt_idx* p, int* d, int len, point* p1, point* p2)
   }
 }
 
-static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsigned>& indices)
+static void find_hull(vector<pt_idx>& pts, pt_idx p1, pt_idx p2, vector<unsigned>& indices)
 {
   if (pts.size() == 0)
   {
     // printf("p1 = (%f, %f) idx = %u\n", p1->p.x, p1->p.y, p1->idx);
-    indices.push_back(p1->idx);
+    indices.push_back(p1.idx);
     return;
   }
 
   pt_idx* d_p;
   cudaMalloc(&d_p, sizeof(pt_idx) * pts.size());
-  for (int i = 0; i < pts.size(); i++)
-  {
-    cudaMemcpy(&d_p[i], pts[i], sizeof(pt_idx), cudaMemcpyHostToDevice);
-  }
-  // cudaMemcpy(d_p, pts.data(), sizeof(pt_idx) * pts.size(), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_p, pts.data(), sizeof(pt_idx) * pts.size(), cudaMemcpyHostToDevice);
 
   float * d_dist;
   cudaMalloc(&d_dist, sizeof(float) * pts.size());
   cudaMemset(d_dist, 0, sizeof(float) * pts.size());
 
-  point* d_p1;
-  point* d_p2;
-  cudaMalloc(&d_p1, sizeof(point));
-  cudaMalloc(&d_p2, sizeof(point));
-  cudaMemcpy(d_p1, &p1->p, sizeof(point), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_p2, &p2->p, sizeof(point), cudaMemcpyHostToDevice);
-
   dim3 dimBlock(BLOCK_SIZE);
   dim3 dimGrid((pts.size() - 1) / BLOCK_SIZE + 1);
-  dist<<<dimGrid, dimBlock>>>(d_p, d_dist, pts.size(), d_p1, d_p2);
-  float * h_dist;
+  dist<<<dimGrid, dimBlock>>>(d_p, d_dist, pts.size(), p1, p2);
+  float *h_dist;
   h_dist = (float *)malloc(sizeof(float) * pts.size());
   cudaMemcpy(h_dist, d_dist, sizeof(float) * pts.size(), cudaMemcpyDeviceToHost);
 
@@ -126,27 +115,22 @@ static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsig
     }
   }
 
-  vector<pt_idx*> ac;
-  vector<pt_idx*> cb;
+  vector<pt_idx> ac;
+  vector<pt_idx> cb;
 
   int * d_ccw_ac;
   cudaMalloc(&d_ccw_ac, sizeof(int) * pts.size());
   cudaMemset(d_ccw_ac, 0, sizeof(int) * pts.size());
 
-  point * d_p3;
-  cudaMalloc(&d_p3, sizeof(point));
-  cudaMemcpy(d_p3, &p->p, sizeof(point), cudaMemcpyHostToDevice);
-
-  ccw<<<dimGrid, dimBlock>>>(d_p, d_ccw_ac, pts.size(), d_p1, d_p3);
+  ccw<<<dimGrid, dimBlock>>>(d_p, d_ccw_ac, pts.size(), p1, p);
   int * h_ccw_ac = (int *)malloc(sizeof(int) * pts.size());
   cudaMemcpy(h_ccw_ac, d_ccw_ac, sizeof(int) * pts.size(), cudaMemcpyDeviceToHost);
-
 
   int * d_ccw_cb;
   cudaMalloc(&d_ccw_cb, sizeof(int) * pts.size());
   cudaMemset(d_ccw_cb, 0, sizeof(int) * pts.size());
 
-  ccw<<<dimGrid, dimBlock>>>(d_p, d_ccw_cb, pts.size(), d_p3, d_p2);
+  ccw<<<dimGrid, dimBlock>>>(d_p, d_ccw_cb, pts.size(), p, p2);
   int * h_ccw_cb = (int *)malloc(sizeof(int) * pts.size());
   cudaMemcpy(h_ccw_cb, d_ccw_cb, sizeof(int) * pts.size(), cudaMemcpyDeviceToHost);
 
@@ -172,44 +156,30 @@ static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsig
   cudaFree(d_dist);
   cudaFree(d_ccw_ac);
   cudaFree(d_ccw_cb);
-  cudaFree(d_p1);
-  cudaFree(d_p2);
-  cudaFree(d_p3);
 
   find_hull(ac, p1, p, indices);
   find_hull(cb, p, p2, indices);
 }
 
-static int compute(vector<pt_idx*>& pts, vector<unsigned>& indices)
+static int compute(vector<pt_idx>& pts, vector<unsigned>& indices)
 {
   auto left = pts[0];
   auto right = pts[pts.size() - 1];
 
-  vector<pt_idx*> ccw_pts;
-  vector<pt_idx*> cw_pts;
+  vector<pt_idx> ccw_pts;
+  vector<pt_idx> cw_pts;
 
   pt_idx* d_p;
   cudaMalloc(&d_p, sizeof(pt_idx) * pts.size());
-  for (int i = 0; i < pts.size(); i++)
-  {
-    cudaMemcpy(&d_p[i], pts[i], sizeof(pt_idx), cudaMemcpyHostToDevice);
-  }
+  cudaMemcpy(d_p, pts.data(), sizeof(pt_idx) * pts.size(), cudaMemcpyHostToDevice);
 
   int * d_ccw;
   cudaMalloc(&d_ccw, sizeof(int) * pts.size());
   cudaMemset(d_ccw, 0, sizeof(int) * pts.size());
 
-  point * d_p1;
-  cudaMalloc(&d_p1, sizeof(point));
-  cudaMemcpy(d_p1, &left->p, sizeof(point), cudaMemcpyHostToDevice);
-
-  point * d_p2;
-  cudaMalloc(&d_p2, sizeof(point));
-  cudaMemcpy(d_p2, &right->p, sizeof(point), cudaMemcpyHostToDevice);
-
   dim3 dimBlock(BLOCK_SIZE);
   dim3 dimGrid((pts.size() - 1) / BLOCK_SIZE + 1);
-  ccw<<<dimGrid, dimBlock>>>(d_p, d_ccw, pts.size(), d_p1, d_p2);
+  ccw<<<dimGrid, dimBlock>>>(d_p, d_ccw, pts.size(), left, right);
 
   int * h_ccw;
   h_ccw = (int *)malloc(sizeof(int) * pts.size());
@@ -217,8 +187,6 @@ static int compute(vector<pt_idx*>& pts, vector<unsigned>& indices)
 
   cudaFree(d_p);
   cudaFree(d_ccw);
-  cudaFree(d_p1);
-  cudaFree(d_p2);
 
   for (int i = 1; i < pts.size() - 1; i++)
   {
@@ -234,7 +202,7 @@ static int compute(vector<pt_idx*>& pts, vector<unsigned>& indices)
       cw_pts.push_back(pts[i]);
     }
   }
-
+  // return 0;
   find_hull(ccw_pts, left, right, indices);
   find_hull(cw_pts, right, left, indices);
 
@@ -250,7 +218,7 @@ int main(int argc, char *argv[]) {
   int inputLength;
   float *hostX;
   float *hostY;
-  vector<pt_idx *> hostPts;
+  vector<pt_idx> hostPts;
   vector<unsigned> hostAnswer;
 
   args = gpuTKArg_read(argc, argv);
@@ -258,7 +226,7 @@ int main(int argc, char *argv[]) {
   gpuTKTime_start(Generic, "Importing data and creating memory on host");
   hostX = (float *)gpuTKImport(gpuTKArg_getInputFile(args, 0), &inputLength);
   hostY = (float *)gpuTKImport(gpuTKArg_getInputFile(args, 1), &inputLength);
-  hostPts = vector<pt_idx *>(inputLength);
+  hostPts = vector<pt_idx>(inputLength);
   gpuTKTime_stop(Generic, "Importing data and creating memory on host");
 
   gpuTKLog(TRACE, "The input length is ", inputLength);
@@ -266,15 +234,15 @@ int main(int argc, char *argv[]) {
   gpuTKTime_start(Generic, "Create data");
   for (unsigned i = 0; i < inputLength; i++)
   {
-    hostPts[i] = new pt_idx{i, {hostX[i], hostY[i]}};
+    hostPts[i] = pt_idx{i, hostX[i], hostY[i]};
   }
-  std::sort(hostPts.begin(), hostPts.end(), [](const pt_idx* a, const pt_idx* b) {
-    if (a->p.x < b->p.x) {
+  std::sort(hostPts.begin(), hostPts.end(), [](const pt_idx& a, const pt_idx& b) {
+    if (a.x < b.x) {
       return true;
-    } else if (a->p.x > b->p.x) {
+    } else if (a.x > b.x) {
       return false;
     } else {
-      return a->p.y < b->p.y;
+      return a.y < b.y;
     }
   });
   gpuTKTime_stop(Generic, "Create data");
@@ -292,10 +260,6 @@ int main(int argc, char *argv[]) {
   gpuTKSolution(args, hostAnswer.data(), hostAnswer.size());
 
   // Free memory
-  for (unsigned i = 0; i < inputLength; i++)
-  {
-    delete hostPts[i];
-  }
   free(hostX);
   free(hostY);
   return 0;

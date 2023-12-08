@@ -1,0 +1,10 @@
+[TIME][Generic][Importing data and creating memory on host][template_v1.cu: 289-293] Elapsed time: 2331.22 ms
+The input length is 1000000
+[TIME][Generic][Create data][template_v1.cu: 297-311] Elapsed time: 486.198 ms
+[TIME][GPU][Allocating GPU memory.][template_v1.cu: 313-316] Elapsed time: 0.00517 ms
+[TIME][GPU][Copying input memory to the GPU.][template_v1.cu: 318-321] Elapsed time: 0.004669 ms
+Launching kernel
+[TIME][Compute][Performing CUDA computation][template_v1.cu: 326-329] Elapsed time: 168316 ms
+[TIME][Copy][Copying output memory to the CPU][template_v1.cu: 331-334] Elapsed time: 0.00622 ms
+[TIME][GPU][Freeing GPU Memory][template_v1.cu: 336-338] Elapsed time: 0.00526 ms
+The solution is correct
