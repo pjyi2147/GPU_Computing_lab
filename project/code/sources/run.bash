@@ -8,7 +8,7 @@ rm -r output
 mkdir output
 
 # Loop from 0 to 9 to replace the placeholder and run the command
-for number in {0..4}; do
+for number in {0..6}; do
     # Replace the placeholder with the current number
     modified_command="${command//NUM/$number}"
 

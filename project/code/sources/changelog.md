@@ -17,6 +17,11 @@ v4:
 * Apply parallel reduction on the max dist calculation
 * Best perf at 32 * BLOCKSIZE (85ms on 2M points)
 
+v5:
+
+* Apply Unified memory
+* Does not work well
+
 upgrade room:
 
 * unified memory
@@ -24,3 +29,4 @@ upgrade room:
 * change ccw sorting algo to min copy
 * when there is not enough points (i.e. <= BLOCK_SIZE) use CPU for ccw and sorting
 * what else?r
+* GPU sorting??
