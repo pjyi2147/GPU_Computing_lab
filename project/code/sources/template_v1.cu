@@ -279,16 +279,6 @@ int main(int argc, char *argv[]) {
   });
   gpuTKTime_stop(Generic, "Create data");
 
-  gpuTKTime_start(GPU, "Allocating GPU memory.");
-  //@@ Allocate GPU memory here
-  CUDA_CHECK(cudaDeviceSynchronize());
-  gpuTKTime_stop(GPU, "Allocating GPU memory.");
-
-  gpuTKTime_start(GPU, "Copying input memory to the GPU.");
-  //@@ Copy memory to the GPU here
-  CUDA_CHECK(cudaDeviceSynchronize());
-  gpuTKTime_stop(GPU, "Copying input memory to the GPU.");
-
   // Launch kernel
   // ----------------------------------------------------------
   gpuTKLog(TRACE, "Launching kernel");
@@ -296,15 +286,6 @@ int main(int argc, char *argv[]) {
   //@@ Perform kernel computation here
   compute(hostPts, hostAnswer);
   gpuTKTime_stop(Compute, "Performing CUDA computation");
-
-  gpuTKTime_start(Copy, "Copying output memory to the CPU");
-  //@@ Copy the GPU memory back to the CPU here
-  CUDA_CHECK(cudaDeviceSynchronize());
-  gpuTKTime_stop(Copy, "Copying output memory to the CPU");
-
-  gpuTKTime_start(GPU, "Freeing GPU Memory");
-  //@@ Free the GPU memory here
-  gpuTKTime_stop(GPU, "Freeing GPU Memory");
 
   // Verify correctness
   // -----------------------------------------------------
