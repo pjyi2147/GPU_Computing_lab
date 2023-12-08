@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Define the command template with a placeholder for the number
-command="./Histogram_template -e Histogram/Dataset/NUM/output.raw -i Histogram/Dataset/NUM/input.raw -t integral_vector"
+command="./ConvexHull_template -e ConvexHull/Dataset/NUM/output.raw -i ConvexHull/Dataset/NUM/input1.raw,ConvexHull/Dataset/NUM/input2.raw -t integral_vector"
 
 make template
 rm -r output
 mkdir output
 
 # Loop from 0 to 9 to replace the placeholder and run the command
-for number in {0..7}; do
+for number in {0..4}; do
     # Replace the placeholder with the current number
     modified_command="${command//NUM/$number}"
 

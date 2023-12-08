@@ -5,8 +5,8 @@
 static char *base_dir;
 
 struct point {
-  float x;
-  float y;
+  double x;
+  double y;
 };
 
 struct pt_idx {
@@ -16,7 +16,7 @@ struct pt_idx {
 
 static int ccw(point p1, point p2, point p)
 {
-  float prod = (p2.x - p1.x) * (p.y - p1.y) - (p2.y - p1.y) * (p.x - p1.x);
+  double prod = (p2.x - p1.x) * (p.y - p1.y) - (p2.y - p1.y) * (p.x - p1.x);
 
   if (prod > 0)
   {
@@ -32,7 +32,7 @@ static int ccw(point p1, point p2, point p)
   }
 }
 
-static float dist(point p1, point p2, point p)
+static double dist(point p1, point p2, point p)
 {
   return abs((p.y - p1.y) * (p2.x - p1.x) - (p.x - p1.x) * (p2.y - p1.y));
 }
@@ -47,10 +47,10 @@ static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsig
   }
 
   auto p = pts[0];
-  float max_dist = dist(p1->p, p2->p, p->p);
+  double max_dist = dist(p1->p, p2->p, p->p);
   for (int i = 1; i < pts.size(); i++)
   {
-    float d = dist(p1->p, p2->p, pts[i]->p);
+    double d = dist(p1->p, p2->p, pts[i]->p);
     if (d > max_dist)
     {
       p = pts[i];
@@ -115,13 +115,14 @@ static int compute(vector<pt_idx*>& pts, vector<unsigned>& indices)
   return indices.size();
 }
 
-static int compute(vector<unsigned int>& indices, float *inputX_data, float *inputY_data, size_t input_length) {
+static int compute(vector<unsigned int>& indices, double *inputX_data, double *inputY_data, size_t input_length) {
   // convex hull algorithm on the CPU with inputX and inputY
   // output is sorted in indices array
   // return value is the number of points in the convex hull
 
   // sort the points by x coordinate
   std::vector<pt_idx*> pts(input_length);
+  // printf("input_length = %lu\n", input_length);
   for (unsigned int i = 0; i < input_length; i++) {
     pts[i] = new pt_idx{i, {inputX_data[i], inputY_data[i]}};
     // printf("pts[%d] = (%f, %f)\n", i, pts[i]->p.x, pts[i]->p.y);
@@ -145,15 +146,24 @@ static int compute(vector<unsigned int>& indices, float *inputX_data, float *inp
   for (int i = 0; i < ret; i++) {
     indices.push_back(v_indices[i]);
   }
+
+  // free the memory
+  for (int i = 0; i < pts.size(); i++) {
+    delete pts[i];
+  }
   return ret;
 }
 
-static float *generate_data(size_t n) {
-  float *data = (float *)malloc(sizeof(float) * n);
+static void generate_data(double *&X, double *&Y, size_t n) {
+  X = (double *)malloc(sizeof(double) * n);
+  Y = (double *)malloc(sizeof(double) * n);
   for (unsigned int i = 0; i < n; i++) {
-    data[i] = -1.0f + (float)rand() / ((float)RAND_MAX / 2.0f);
+    double radius = (double)rand() / RAND_MAX;
+    double angle = (double)rand() / RAND_MAX * 2 * M_PI;
+
+    X[i] = radius * cos(angle);
+    Y[i] = radius * sin(angle);
   }
-  return data;
 }
 
 static void write_data(char *file_name, vector<unsigned int>& data) {
@@ -166,11 +176,11 @@ static void write_data(char *file_name, vector<unsigned int>& data) {
   fclose(handle);
 }
 
-static void write_data(char *file_name, float *data, int num) {
+static void write_data(char *file_name, double *data, int num) {
   FILE *handle = fopen(file_name, "w");
   fprintf(handle, "%d", num);
   for (int ii = 0; ii < num; ii++) {
-    fprintf(handle, "\n%.6f", *data++);
+    fprintf(handle, "\n%lf", *data++);
   }
   fflush(handle);
   fclose(handle);
@@ -185,10 +195,10 @@ static void create_dataset(int datasetNum, size_t input_length) {
   char *inputY_file_name  = gpuTKPath_join(dir_name, "input2.raw");
   char *output_file_name = gpuTKPath_join(dir_name, "output.raw");
 
-  float *inputX_data = generate_data(input_length);
-  float *inputY_data = generate_data(input_length);
+  double *inputX_data;
+  double *inputY_data;
+  generate_data(inputX_data, inputY_data, input_length);
   vector<unsigned int> output_data;
-
   compute(output_data, inputX_data, inputY_data, input_length);
   write_data(inputX_file_name, inputX_data, input_length);
   write_data(inputY_file_name, inputY_data, input_length);
@@ -205,6 +215,6 @@ int main() {
   create_dataset(1, 200);
   create_dataset(2, 100000);
   create_dataset(3, 1000000);
-  create_dataset(4, 10000000);
+  create_dataset(4, 2000000);
   return 0;
 }
