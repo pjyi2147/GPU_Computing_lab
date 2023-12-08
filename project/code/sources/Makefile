@@ -8,7 +8,7 @@ all: template
 
 
 template:
-	$(NVCC) -std=c++11 template.cu $(INCLUDE) $(LIBS) -o ConvexHull_template
+	$(NVCC) -std=c++17 template.cu $(INCLUDE) $(LIBS) -o ConvexHull_template
 
 
 dataset_generator:

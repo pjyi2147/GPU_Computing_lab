@@ -4,17 +4,17 @@
 
 static char *base_dir;
 
-struct point {
-  double x;
-  double y;
-};
-
 struct pt_idx {
   unsigned idx;
-  point p;
+  double x, y;
+
+  bool operator==(const pt_idx& rhs) const
+  {
+    return x == rhs.x && y == rhs.y && idx == rhs.idx;
+  }
 };
 
-static int ccw(point p1, point p2, point p)
+static int ccw(pt_idx p1, pt_idx p2, pt_idx p)
 {
   double prod = (p2.x - p1.x) * (p.y - p1.y) - (p2.y - p1.y) * (p.x - p1.x);
 
@@ -32,25 +32,25 @@ static int ccw(point p1, point p2, point p)
   }
 }
 
-static double dist(point p1, point p2, point p)
+static double dist(pt_idx p1, pt_idx p2, pt_idx p)
 {
   return abs((p.y - p1.y) * (p2.x - p1.x) - (p.x - p1.x) * (p2.y - p1.y));
 }
 
-static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsigned>& indices)
+static void find_hull(vector<pt_idx>& pts, pt_idx p1, pt_idx p2, vector<unsigned>& indices)
 {
   if (pts.size() == 0)
   {
     // printf("p1 = (%f, %f) idx = %u\n", p1->p.x, p1->p.y, p1->idx);
-    indices.push_back(p1->idx);
+    indices.push_back(p1.idx);
     return;
   }
 
   auto p = pts[0];
-  double max_dist = dist(p1->p, p2->p, p->p);
+  double max_dist = dist(p1, p2, p);
   for (int i = 1; i < pts.size(); i++)
   {
-    double d = dist(p1->p, p2->p, pts[i]->p);
+    double d = dist(p1, p2, pts[i]);
     if (d > max_dist)
     {
       p = pts[i];
@@ -58,8 +58,8 @@ static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsig
     }
   }
 
-  vector<pt_idx*> ac;
-  vector<pt_idx*> cb;
+  vector<pt_idx> ac;
+  vector<pt_idx> cb;
   for (int i = 0; i < pts.size(); i++)
   {
     if (pts[i] == p)
@@ -67,13 +67,13 @@ static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsig
       continue;
     }
 
-    int side = ccw(p1->p, p->p, pts[i]->p);
+    int side = ccw(p1, p, pts[i]);
     if (side == 1)
     {
       ac.push_back(pts[i]);
     }
 
-    side = ccw(p->p, p2->p, pts[i]->p);
+    side = ccw(p, p2, pts[i]);
     if (side == 1)
     {
       cb.push_back(pts[i]);
@@ -84,17 +84,17 @@ static void find_hull(vector<pt_idx*>& pts, pt_idx* p1, pt_idx* p2, vector<unsig
   find_hull(cb, p, p2, indices);
 }
 
-static int compute(vector<pt_idx*>& pts, vector<unsigned>& indices)
+static int compute(vector<pt_idx>& pts, vector<unsigned>& indices)
 {
   auto left = pts[0];
   auto right = pts[pts.size() - 1];
 
-  vector<pt_idx*> ccw_pts;
-  vector<pt_idx*> cw_pts;
+  vector<pt_idx> ccw_pts;
+  vector<pt_idx> cw_pts;
 
   for (int i = 1; i < pts.size() - 1; i++)
   {
-    int side = ccw(left->p, right->p, pts[i]->p);
+    int side = ccw(left, right, pts[i]);
     if (side == 1)
     {
       ccw_pts.push_back(pts[i]);
@@ -121,19 +121,19 @@ static int compute(vector<unsigned int>& indices, double *inputX_data, double *i
   // return value is the number of points in the convex hull
 
   // sort the points by x coordinate
-  std::vector<pt_idx*> pts(input_length);
+  std::vector<pt_idx> pts(input_length);
   // printf("input_length = %lu\n", input_length);
   for (unsigned int i = 0; i < input_length; i++) {
-    pts[i] = new pt_idx{i, {inputX_data[i], inputY_data[i]}};
+    pts[i] = pt_idx{i, inputX_data[i], inputY_data[i]};
     // printf("pts[%d] = (%f, %f)\n", i, pts[i]->p.x, pts[i]->p.y);
   }
-  std::sort(pts.begin(), pts.end(), [](const pt_idx* a, const pt_idx* b) {
-    if (a->p.x < b->p.x) {
+  std::sort(pts.begin(), pts.end(), [](const pt_idx& a, const pt_idx& b) {
+    if (a.x < b.x) {
       return true;
-    } else if (a->p.x > b->p.x) {
+    } else if (a.x > b.x) {
       return false;
     } else {
-      return a->p.y < b->p.y;
+      return a.y < b.y;
     }
   });
 
@@ -147,10 +147,6 @@ static int compute(vector<unsigned int>& indices, double *inputX_data, double *i
     indices.push_back(v_indices[i]);
   }
 
-  // free the memory
-  for (int i = 0; i < pts.size(); i++) {
-    delete pts[i];
-  }
   return ret;
 }
 
@@ -161,8 +157,10 @@ static void generate_data(double *&X, double *&Y, size_t n) {
     double radius = (double)rand() / RAND_MAX;
     double angle = (double)rand() / RAND_MAX * 2 * M_PI;
 
-    X[i] = radius * cos(angle);
-    Y[i] = radius * sin(angle);
+    // X[i] = radius * cos(angle);
+    // Y[i] = radius * sin(angle);
+    X[i] = roundf(radius * cos(angle) * 1e6) / 1e6;
+    Y[i] = roundf(radius * sin(angle) * 1e6) / 1e6;
   }
 }
 
@@ -216,5 +214,7 @@ int main() {
   create_dataset(2, 100000);
   create_dataset(3, 1000000);
   create_dataset(4, 2000000);
+  create_dataset(5, 4000000);
+  create_dataset(6, 5000000);
   return 0;
 }
