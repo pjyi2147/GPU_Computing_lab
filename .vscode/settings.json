@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "*.wlp4": "c",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "list": "cpp"
     },
     "cmake.configureOnOpen": false
 }

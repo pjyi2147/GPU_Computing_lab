@@ -238,10 +238,6 @@ static int compute(vector<pt_idx*>& pts, vector<unsigned>& indices)
   find_hull(ccw_pts, left, right, indices);
   find_hull(cw_pts, right, left, indices);
 
-  // for (int i = 0; i < indices.size(); i++)
-  // {
-  //   printf("indices[%d] = %u\n");
-  // }
   return indices.size();
 }
 
@@ -263,6 +259,7 @@ int main(int argc, char *argv[]) {
 
   gpuTKLog(TRACE, "The input length is ", inputLength);
 
+  gpuTKTime_start(Generic, "Total Computation");
   gpuTKTime_start(Generic, "Create data");
   for (unsigned i = 0; i < inputLength; i++)
   {
@@ -286,7 +283,7 @@ int main(int argc, char *argv[]) {
   //@@ Perform kernel computation here
   compute(hostPts, hostAnswer);
   gpuTKTime_stop(Compute, "Performing CUDA computation");
-
+  gpuTKTime_stop(Generic, "Total Computation");
   // Verify correctness
   // -----------------------------------------------------
   gpuTKSolution(args, hostAnswer.data(), hostAnswer.size());

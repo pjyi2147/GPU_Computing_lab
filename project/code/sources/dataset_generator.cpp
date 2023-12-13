@@ -153,12 +153,11 @@ static int compute(vector<unsigned int>& indices, double *inputX_data, double *i
 static void generate_data(double *&X, double *&Y, size_t n) {
   X = (double *)malloc(sizeof(double) * n);
   Y = (double *)malloc(sizeof(double) * n);
+  srand((unsigned)time(NULL));
   for (unsigned int i = 0; i < n; i++) {
     double radius = (double)rand() / RAND_MAX;
     double angle = (double)rand() / RAND_MAX * 2 * M_PI;
 
-    // X[i] = radius * cos(angle);
-    // Y[i] = radius * sin(angle);
     X[i] = roundf(radius * cos(angle) * 1e6) / 1e6;
     Y[i] = roundf(radius * sin(angle) * 1e6) / 1e6;
   }
@@ -209,12 +208,12 @@ static void create_dataset(int datasetNum, size_t input_length) {
 int main() {
   base_dir = gpuTKPath_join(gpuTKDirectory_current(), "ConvexHull", "Dataset");
 
-  create_dataset(0, 16);
-  create_dataset(1, 200);
-  create_dataset(2, 100000);
-  create_dataset(3, 1000000);
-  create_dataset(4, 2000000);
-  create_dataset(5, 4000000);
+  create_dataset(0, 5000000);
+  create_dataset(1, 5000000);
+  create_dataset(2, 5000000);
+  create_dataset(3, 5000000);
+  create_dataset(4, 5000000);
+  create_dataset(5, 5000000);
   create_dataset(6, 5000000);
   return 0;
 }

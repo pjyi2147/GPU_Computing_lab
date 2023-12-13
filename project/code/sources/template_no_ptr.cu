@@ -146,6 +146,7 @@ int main(int argc, char *argv[]) {
 
   gpuTKLog(TRACE, "The input length is ", inputLength);
 
+  gpuTKTime_start(Generic, "Total Computation");
   gpuTKTime_start(Generic, "Create data");
   for (unsigned i = 0; i < inputLength; i++)
   {
@@ -169,6 +170,7 @@ int main(int argc, char *argv[]) {
   //@@ Perform kernel computation here
   compute(hostPts, hostAnswer);
   gpuTKTime_stop(Compute, "Performing CUDA computation");
+  gpuTKTime_stop(Generic, "Total Computation");
 
   // Verify correctness
   // -----------------------------------------------------
