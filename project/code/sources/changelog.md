@@ -22,11 +22,16 @@ v5:
 * Apply Unified memory
 * Does not work well
 
+v6:
+
+* Sort using thrust
+* Works really well
+
 upgrade room:
 
 * unified memory
 * change max distance finding algo to min copy
 * change ccw sorting algo to min copy
 * when there is not enough points (i.e. <= BLOCK_SIZE) use CPU for ccw and sorting
-* what else?r
+* what else?
 * GPU sorting??

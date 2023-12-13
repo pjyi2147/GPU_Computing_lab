@@ -1,14 +1,14 @@
 
 NVCC=nvcc
 INCLUDE= -I./../libgputk
-LIBgpuTK= -L./../build -lgputk -lcuda
+LIBgpuTK= -L./../build -lgputk -lcuda --extended-lambda
 LIBS= $(LIBgpuTK)
 
 all: template
 
 
 template:
-	$(NVCC) -std=c++17 template.cu $(INCLUDE) $(LIBS) -o ConvexHull_template
+	$(NVCC) -std=c++17 template_v6.cu $(INCLUDE) $(LIBS) -o ConvexHull_template
 
 
 dataset_generator:
