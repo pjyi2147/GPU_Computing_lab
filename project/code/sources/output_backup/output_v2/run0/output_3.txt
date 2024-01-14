@@ -1,6 +1,0 @@
-[TIME][Generic][Importing data and creating memory on host][template_v2.cu: 231-235] Elapsed time: 2322.15 ms
-The input length is 1000000
-[TIME][Generic][Create data][template_v2.cu: 239-253] Elapsed time: 300.127 ms
-Launching kernel
-[TIME][Compute][Performing CUDA computation][template_v2.cu: 258-261] Elapsed time: 225.331 ms
-The solution is correct
