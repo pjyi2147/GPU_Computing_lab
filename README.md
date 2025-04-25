@@ -1,4 +1,4 @@
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fpjyi2147%2FGPU_Computing_lab&count_bg=%23FFBC93&title_bg=%238FC2FF&icon=&icon_color=%23E7E7E7&title=visits&edge_flat=false)](https://hits.seeyoufarm.com)
+![Badge](https://hits.patrickyi.xyz/api/hit?url=https%3A%2F%2Fgithub.com%2Fpjyi2147%2FGPU_Computing_lab&label=Visits&icon=github&color=%23ffcd39) 
 
 ## GPU Computing Labs
 
